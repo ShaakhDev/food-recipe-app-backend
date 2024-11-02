@@ -7,7 +7,9 @@ const path = require("path");
 
 const authRouter = require("./routes/auth.router");
 const recipeRouter = require("./routes/recipe.router");
+const uploadRouter = require("./routes/upload.router");
 const swaggerDocs = require("./swagger");
+const { protect } = require("./middleware/authMiddleware");
 
 dotenv.config();
 const app = express();
@@ -15,24 +17,24 @@ const mongoUri = process.env.MONGO_URI;
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
-app.use("/auth", authRouter);
-app.use(recipeRouter);
+app.use("/api/auth", authRouter);
+app.use("/api", protect, recipeRouter);
 
 // Multer sozlamalari
-const storage = multer.diskStorage({
-  destination: "./uploads/",
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: "./uploads/",
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`);
+//   },
+// });
 
-const upload = multer({ storage });
+// const upload = multer({ storage });
 
-// Rasm yuklash endpointi
+app.use("/api", protect, uploadRouter);
 
-app.post("/upload", upload.single("file"), (req, res) => {
-  res.json({ filePath: `/uploads/${req.file.filename}` });
-});
+// app.post("/api/upload", upload.single("file"), (req, res) => {
+//   res.json({ filePath: `/uploads/${req.file.filename}` });
+// });
 
 // Static fayllarni xizmat qilish
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

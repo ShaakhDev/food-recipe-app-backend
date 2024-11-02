@@ -14,9 +14,19 @@ const options = {
       },
       version: "1.0.0",
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+
     servers: [
       {
-        url: "http://localhost:8080/",
+        url: "http://localhost:8080/api",
         description: "Local server",
       },
       //   {

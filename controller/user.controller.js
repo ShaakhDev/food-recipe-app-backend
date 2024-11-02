@@ -16,17 +16,15 @@ const RegisterUser = async (req, res) => {
       return res.status(400).json({ message: "User already exist" });
     }
 
-    const user = User.create({
+    await User.create({
       name,
       email,
       password,
     });
 
     res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
+      success: true,
+      message: "User created successfully",
     });
   } catch (error) {
     console.log(error);
@@ -40,10 +38,7 @@ const Login = async (req, res) => {
     const user = await User.findOne({ email });
     if (user && (await user.matchPassword(password))) {
       res.json({
-        _id: user._id,
-        // name: user.name,
-        email: user.email,
-        // password: user.password,
+        success: true,
         token: generateToken(user._id),
       });
     } else {

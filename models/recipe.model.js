@@ -14,10 +14,13 @@ const RecipeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    ingredients: {
-      type: Array,
-      required: true,
-    },
+    ingredients: [
+      {
+        _id: { type: String, required: true },
+        ingredient_name: { type: String, required: true },
+        amount: { type: String, required: true },
+      },
+    ],
     instructions: {
       type: Array,
       required: true,
@@ -34,10 +37,12 @@ const RecipeSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    comments: {
-      type: Array,
-      default: [],
-    },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
 
     user: {
       type: mongoose.Schema.Types.ObjectId,
