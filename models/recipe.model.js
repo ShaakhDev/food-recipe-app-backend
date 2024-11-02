@@ -16,9 +16,18 @@ const RecipeSchema = new mongoose.Schema(
     },
     ingredients: [
       {
-        _id: { type: String, required: true },
-        ingredient_name: { type: String, required: true },
-        amount: { type: String, required: true },
+        name: {
+          type: String,
+          required: true,
+        },
+        amount: {
+          type: String,
+          required: true,
+        },
+        image: {
+          type: String,
+          required: true,
+        },
       },
     ],
     instructions: {

@@ -21,20 +21,8 @@ app.use("/api/auth", authRouter);
 app.use("/api", protect, recipeRouter);
 
 // Multer sozlamalari
-// const storage = multer.diskStorage({
-//   destination: "./uploads/",
-//   filename: (req, file, cb) => {
-//     cb(null, `${Date.now()}-${file.originalname}`);
-//   },
-// });
-
-// const upload = multer({ storage });
 
 app.use("/api", protect, uploadRouter);
-
-// app.post("/api/upload", upload.single("file"), (req, res) => {
-//   res.json({ filePath: `/uploads/${req.file.filename}` });
-// });
 
 // Static fayllarni xizmat qilish
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

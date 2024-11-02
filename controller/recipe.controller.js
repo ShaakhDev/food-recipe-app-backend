@@ -50,8 +50,8 @@ const CreateRecipe = async (req, res) => {
     if (!description)
       return res.status(400).json({ message: "description is required" });
     if (!time) return res.status(400).json({ message: "time is required" });
-    if (!ingredients)
-      return res.status(400).json({ message: "ingredients is required" });
+    if (!ingredients || ingredients.length === 0)
+      return res.status(400).json({ message: "ingredients is required " });
     if (!instructions)
       return res.status(400).json({ message: "instructions is required" });
     if (!image) return res.status(400).json({ message: "image is required" });
@@ -68,22 +68,21 @@ const CreateRecipe = async (req, res) => {
 };
 
 const WriteComment = async (req, res) => {
-    try {
-        const recipe = await Recipe.findById(req.params.id);
-        if (!recipe) {
-        return res.status(404).json({ message: "recipe not found" });
-        }
-    
-        const comment = await Comment.create({ ...req.body, user: req.user._id });
-        recipe.comments.push(comment._id);
-        await recipe.save();
-    
-        res.status(201).json(comment);
-    } catch (error) {
-        res.status(400).json({ message: "error write comment", error });
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) {
+      return res.status(404).json({ message: "recipe not found" });
     }
-}
 
+    const comment = await Comment.create({ ...req.body, user: req.user._id });
+    recipe.comments.push(comment._id);
+    await recipe.save();
+
+    res.status(201).json(comment);
+  } catch (error) {
+    res.status(400).json({ message: "error write comment", error });
+  }
+};
 
 const UpdateRecipe = async (req, res) => {
   try {
@@ -123,6 +122,6 @@ module.exports = {
   GetRecipe,
   CreateRecipe,
   UpdateRecipe,
-    WriteComment,
+  WriteComment,
   DeleteRecipe,
 };
