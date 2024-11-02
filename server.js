@@ -6,6 +6,8 @@ const multer = require("multer");
 const path = require("path");
 
 const authRouter = require("./routes/auth.router");
+const recipeRouter = require("./routes/recipe.router");
+const swaggerDocs = require("./swagger");
 
 dotenv.config();
 const app = express();
@@ -14,7 +16,7 @@ const mongoUri = process.env.MONGO_URI;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/auth", authRouter);
-// app.use(router);
+app.use(recipeRouter);
 
 // Multer sozlamalari
 const storage = multer.diskStorage({
@@ -27,6 +29,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Rasm yuklash endpointi
+
 app.post("/upload", upload.single("file"), (req, res) => {
   res.json({ filePath: `/uploads/${req.file.filename}` });
 });
@@ -46,6 +49,7 @@ mongoose
     app.listen(PORT, () => {
       console.log("server running on port", PORT);
     });
+    swaggerDocs(app, PORT);
   })
   .catch((error) => {
     console.error("MongoDB connection error", error);
