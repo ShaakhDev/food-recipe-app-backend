@@ -29,10 +29,10 @@ const options = {
         url: "http://localhost:8080/api",
         description: "Local server",
       },
-      //   {
-      //     url: "<your live url here>",
-      //     description: "Live server",
-      //   },
+      {
+        url: "https://food-recipe-app-backend-aaka.onrender.com/api",
+        description: "Live server",
+      },
     ],
   },
   // looks for configuration in specified directories
