@@ -20,11 +20,7 @@ const RecipeSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
-        amount: {
-          type: String,
-          required: true,
-        },
-        image: {
+        quantity: {
           type: String,
           required: true,
         },
