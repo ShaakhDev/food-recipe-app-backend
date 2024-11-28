@@ -65,7 +65,7 @@ router.get("/recipe/get-all", GetRecipes);
 router.get("/recipe/:id", GetRecipe);
 /**
  * @openapi
- * '/recipe/new':
+ * '/recipe/get-new':
  *  get:
  *    security:
  *    - bearerAuth: []
@@ -83,7 +83,7 @@ router.get("/recipe/:id", GetRecipe);
  *           description: Server Error
  *
  */
-router.get("/recipe/new", GetNewRecipes);
+router.get("/recipe/get-new", GetNewRecipes);
 /** POST Methods */
 /**
  * @openapi
