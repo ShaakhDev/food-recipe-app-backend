@@ -8,6 +8,7 @@ const path = require("path");
 const authRouter = require("./routes/auth.router");
 const recipeRouter = require("./routes/recipe.router");
 const uploadRouter = require("./routes/upload.router");
+const foodRouter = require("./routes/food.routes");
 const swaggerDocs = require("./swagger");
 const { protect } = require("./middleware/authMiddleware");
 
@@ -17,14 +18,14 @@ const mongoUri = process.env.MONGO_URI;
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
+
+// Routes
 app.use("/api/auth", authRouter);
-app.use("/api", protect, recipeRouter);
-
-// Multer sozlamalari
-
+app.use("/api", recipeRouter);
+app.use("/api", foodRouter);
 app.use("/api", protect, uploadRouter);
 
-// Static fayllarni xizmat qilish
+// Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 8080;

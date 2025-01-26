@@ -2,14 +2,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/auth.models");
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, "SSHHHH", {
+  return jwt.sign({ id }, process.env.JWT_SECRET || "SSHHHH", {
     expiresIn: "30d",
   });
 };
 
 const RegisterUser = async (req, res) => {
   const { name, email, password } = req.body;
-
+  console.log("request received", name, email);
   try {
     const userExist = await User.findOne({ email });
     if (userExist) {
@@ -49,5 +49,11 @@ const Login = async (req, res) => {
     res.status(400).json({ message: "error login", error });
   }
 };
+
+// const GetUser = async (req, res) => {
+//   const token = req.headers.authorization;
+
+//   // const user = await User.findById(req.user._id);
+// };
 
 module.exports = { RegisterUser, Login };

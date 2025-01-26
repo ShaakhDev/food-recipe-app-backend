@@ -64,4 +64,10 @@ router.post("/sign-up", RegisterUser);
  */
 router.post("/sign-in", Login);
 
+router.get("/user", (req, res) => {
+  const token = req.headers.authorization;
+  console.log(token);
+  // find user from db and if it exists send user data to client
+  // if user is not found send 404 status code and message user not found
+});
 module.exports = router;

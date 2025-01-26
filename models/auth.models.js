@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema(
     location: {
       type: String,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
     followers: {
       type: Number,
       default: 0,
