@@ -50,10 +50,95 @@ const Login = async (req, res) => {
   }
 };
 
-// const GetUser = async (req, res) => {
-//   const token = req.headers.authorization;
+const GetUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        profession: user.profession,
+        bio: user.bio,
+        location: user.location,
+        followers: user.followers,
+        following: user.following,
+        isAdmin: user.isAdmin,
+      },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching user profile", error: error.message });
+  }
+};
 
-//   // const user = await User.findById(req.user._id);
-// };
+const UpdateUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-module.exports = { RegisterUser, Login };
+    const { name, email, image, profession, bio, location, followers, following } = req.body;
+
+    // Update user fields if provided
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (image) user.image = image;
+    if (profession) user.profession = profession;
+    if (bio) user.bio = bio;
+    if (location) user.location = location;
+    if (followers !== undefined) user.followers = followers;
+    if (following !== undefined) user.following = following;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      success: true,
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        image: updatedUser.image,
+        profession: updatedUser.profession,
+        bio: updatedUser.bio,
+        location: updatedUser.location,
+        followers: updatedUser.followers,
+        following: updatedUser.following,
+        isAdmin: updatedUser.isAdmin,
+      },
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating user profile", error: error.message });
+  }
+};
+
+const DeleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await User.findByIdAndDelete(req.user._id);
+
+    res.json({
+      success: true,
+      message: "User profile deleted successfully"
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting user profile", error: error.message });
+  }
+};
+
+module.exports = { RegisterUser, Login, GetUser, UpdateUser, DeleteUser };

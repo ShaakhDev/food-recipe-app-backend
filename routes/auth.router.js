@@ -1,5 +1,6 @@
 const express = require("express");
-const { RegisterUser, Login } = require("../controller/user.controller");
+const { RegisterUser, Login, GetUser, UpdateUser, DeleteUser } = require("../controller/user.controller");
+const { protect } = require("../middleware/auth.middleware");
 
 const router = express.Router();
 /** POST Methods */
@@ -70,4 +71,9 @@ router.get("/user", (req, res) => {
   // find user from db and if it exists send user data to client
   // if user is not found send 404 status code and message user not found
 });
+
+router.get("/profile", protect, GetUser);
+router.put("/profile", protect, UpdateUser);
+router.delete("/profile", protect, DeleteUser);
+
 module.exports = router;

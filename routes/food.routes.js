@@ -8,6 +8,7 @@ const {
   addMultipleFoods,
   getUserCart,
   getOrderHistory,
+  updateOrderStatus,
 } = require("../controller/food.controller");
 const { verifyToken, verifyAdmin } = require("../middleware/authMiddleware");
 
@@ -468,5 +469,102 @@ router.post("/order", verifyToken, createOrder);
  *         description: Server Error
  */
 router.get("/orders", verifyToken, getOrderHistory);
+
+/**
+ * @openapi
+ * '/order/{orderId}/status':
+ *  put:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *     - Food API
+ *     summary: Update order status (Admin only)
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Order ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, processing, delivered, cancelled]
+ *                 example: processing
+ *     responses:
+ *       200:
+ *         description: Order status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Order status updated to processing
+ *                 order:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     userId:
+ *                       type: string
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           foodId:
+ *                             type: object
+ *                             properties:
+ *                               name:
+ *                                 type: string
+ *                               description:
+ *                                 type: string
+ *                               image:
+ *                                 type: string
+ *                               price:
+ *                                 type: number
+ *                           quantity:
+ *                             type: number
+ *                           price:
+ *                             type: number
+ *                     totalAmount:
+ *                       type: number
+ *                     status:
+ *                       type: string
+ *                       enum: [pending, processing, delivered, cancelled]
+ *                     deliveryTime:
+ *                       type: string
+ *                       format: date-time
+ *                     actualDeliveryTime:
+ *                       type: string
+ *                       format: date-time
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Bad request - Invalid status or order already delivered/cancelled
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Not admin
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Server Error
+ */
+router.put("/order/:orderId/status", verifyToken, verifyAdmin, updateOrderStatus);
 
 module.exports = router;

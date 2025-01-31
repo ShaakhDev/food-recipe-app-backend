@@ -258,6 +258,71 @@ const getOrderHistory = async (req, res) => {
   }
 };
 
+// Update order status (Admin only)
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    const validStatuses = ['pending', 'processing', 'delivered', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ 
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
+      });
+    }
+
+    // Find order
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Don't allow status change if order is already delivered or cancelled
+    if (order.status === 'delivered' || order.status === 'cancelled') {
+      return res.status(400).json({ 
+        message: `Cannot update status of ${order.status} order` 
+      });
+    }
+
+    // Update status
+    order.status = status;
+
+    // If status is delivered, set actual delivery time
+    if (status === 'delivered') {
+      order.actualDeliveryTime = new Date();
+    }
+
+    // If status is cancelled, handle cancellation
+    if (status === 'cancelled') {
+      // Return items to inventory
+      for (const item of order.items) {
+        const food = await Food.findById(item.foodId);
+        if (food) {
+          food.availableCount += item.quantity;
+          await food.save();
+        }
+      }
+    }
+
+    await order.save();
+
+    // Populate food details for response
+    await order.populate({
+      path: 'items.foodId',
+      select: 'name description image price'
+    });
+
+    res.status(200).json({
+      message: `Order status updated to ${status}`,
+      order
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAllFoods,
   addFood,
@@ -267,4 +332,5 @@ module.exports = {
   addMultipleFoods,
   getUserCart,
   getOrderHistory,
+  updateOrderStatus,
 };
