@@ -10,7 +10,6 @@ const recipeRouter = require("./routes/recipe.router");
 const uploadRouter = require("./routes/upload.router");
 const foodRouter = require("./routes/food.routes");
 const swaggerDocs = require("./swagger");
-const { protect } = require("./middleware/authMiddleware");
 
 dotenv.config();
 const app = express();
@@ -23,10 +22,12 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api", recipeRouter);
 app.use("/api", foodRouter);
-app.use("/api", protect, uploadRouter);
+app.use("/api", uploadRouter);
 
 // Static files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// upload file with multer
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 8080;
 
